@@ -1,0 +1,11 @@
+{
+    "name": "lightspeedretail/with",
+    "description": "Function emulating Python's `with` statement.",
+    "license": "MIT",
+    "type": "project",
+    "autoload": {
+        "files": [
+            "src/with.php"
+        ]
+    }
+}
