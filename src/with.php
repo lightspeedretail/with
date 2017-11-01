@@ -1,40 +1,43 @@
 <?php
 
-/**
- * Function emulating Python's `with` statement.
- *
- * Example Usage:
- *
- * with (new FileOpeningContextManager($filename),
- *   function ($file) use ($data) {
- *     write($file, $data);
- *   }
- * );
- */
-function with(ContextManager $mgr, callable $fn)
+if (!function_exists('with'))
 {
-	$value = $mgr->enter__();
-	$exc = true;
-	try
+	/**
+	 * Function emulating Python's `with` statement.
+	 *
+	 * Example Usage:
+	 *
+	 * with (new FileOpeningContextManager($filename),
+	 *   function ($file) use ($data) {
+	 *     write($file, $data);
+	 *   }
+	 * );
+	 */
+	function with(ContextManager $mgr, callable $fn)
 	{
+		$value = $mgr->enter__();
+		$exc = true;
 		try
 		{
-			$fn($value);
-		}
-		catch (Exception $exception)
-		{
-			$exc = false;
-			if (!$mgr->exit__($exception))
+			try
 			{
-				throw $exception;
+				$fn($value);
+			}
+			catch (Exception $exception)
+			{
+				$exc = false;
+				if (!$mgr->exit__($exception))
+				{
+					throw $exception;
+				}
 			}
 		}
-	}
-	finally
-	{
-		if ($exc)
+		finally
 		{
-			$mgr->exit__(null);
+			if ($exc)
+			{
+				$mgr->exit__(null);
+			}
 		}
 	}
 }
